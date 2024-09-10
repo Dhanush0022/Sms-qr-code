@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS QR Code Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(45deg, #ff6b6b, #f06595, #b9fbc0, #57c7d4); /* Vibrant colors */
+            background-size: 400% 400%; /* Larger size for smooth animation */
+            animation: gradientAnimation 20s ease infinite; /* Slower animation for smooth effect */
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 100%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff; /* Solid white background for the content box */
+            color: #000000;
+            border-radius: 8px;
+            padding: 20px;
+            width: 320px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Enhanced shadow */
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .input-group .prefix {
+            background: #f4f4f4;
+            color: #000;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 4px 0 0 4px;
+            font-weight: bold;
+            width: 55px;
+            text-align: center;
+        }
+
+        .input-group input {
+            width: calc(100% - 55px);
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 0 4px 4px 0;
+            background: #f4f4f4;
+            color: #000;
+            box-sizing: border-box;
+        }
+
+        .message-group {
+            margin-bottom: 20px;
+        }
+
+        .message-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            background: #f4f4f4;
+            color: #000;
+            box-sizing: border-box;
+        }
+
+        .qr-size-select {
+            margin-bottom: 20px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #000;
+            background: #f4f4f4;
+            color: #000;
+            font-size: 16px;
+        }
+
+        button {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+
+        #qrcode {
+            margin-top: 20px;
+        }
+
+        .download-btn {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            display: none;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #333;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SMS QR Code Generator</h1>
+        <p>Enter phone number and optional message:</p>
+        <div class="input-group">
+            <span class="prefix">+91</span>
+            <input type="text" id="phoneNumber" placeholder="Phone Number">
+        </div>
+        <div class="message-group">
+            <input type="text" id="message" placeholder="Optional Message">
+        </div>
+        <select id="qrSize" class="qr-size-select">
+            <option value="150">Small (150x150)</option>
+            <option value="200">Medium (200x200)</option>
+            <option value="250">Large (250x250)</option>
+        </select>
+        <button onclick="generateQRCode()">Generate QR Code</button>
+        <div id="qrcode"></div>
+        <button class="download-btn" id="downloadBtn" onclick="downloadQRCode()">Download QR Code</button>
+    </div>
+
+    <script>
+        function generateQRCode() {
+            var phoneNumber = encodeURIComponent(document.getElementById('phoneNumber').value);
+            var message = encodeURIComponent(document.getElementById('message').value);
+            var size = document.getElementById('qrSize').value;
+
+            if (phoneNumber) {
+                var smsData = 'sms:' + phoneNumber + (message ? '?body=' + message : '');
+                $('#qrcode').empty(); // Clear previous QR code
+                $('#qrcode').qrcode({ text: smsData, width: size, height: size });
+                document.getElementById('downloadBtn').style.display = 'inline-block'; // Show download button
+            } else {
+                alert('Please enter a phone number.');
+            }
+        }
+
+        function downloadQRCode() {
+            var canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                var link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png');
+                link.download = 'qrcode.png';
+                link.click();
+            } else {
+                alert('No QR code to download.');
+            }
+        }
+    </script>
+</body>
+</html>
